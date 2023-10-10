@@ -5,8 +5,15 @@
    <application
         android:label="Garbo"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
-        <activity
+        android:icon="@mipmap/launcher_icon">
+       <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
+       <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token"/>
+
+       <activity android:name="com.facebook.FacebookActivity"
+           android:configChanges=
+               "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+           android:label="@string/app_name" />
+       <activity
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTask"

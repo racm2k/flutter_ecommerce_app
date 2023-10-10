@@ -126,14 +126,35 @@ class _AuthScreenState extends State<AuthScreen> {
                             onPressed: () => _signIn(),
                             text: 'Login',
                             isLoading: state == AuthStatus.authenticating,
+                          ),const SizedBox(
+                            height: 32,
                           ),
-                          TextButton(
-                            onPressed: () => _navigateToRegistrationScreen(),
-                            child: const Text(
-                              'Não possui uma conta? Clique aqui!',
-                              style: TextStyle(
-                                color: Colors.black54,
-                                fontWeight: FontWeight.bold,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              IconButton(
+                                  onPressed: () async {
+                                    authCubit.signInWithFacebook();
+                                  },
+                                  icon: const Icon(
+                                    Icons.facebook_rounded,
+                                    color: Colors.blueAccent,
+                                    size: 48,
+                                  ))
+                            ],
+                          ),
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: TextButton(
+                                onPressed: () => _navigateToRegistrationScreen(),
+                                child: const Text(
+                                  'Não possui uma conta? Clique aqui!',
+                                  style: TextStyle(
+                                    color: Colors.black54,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -159,6 +180,10 @@ class _AuthScreenState extends State<AuthScreen> {
       emailController.text,
       passwordController.text,
     );
+  }
+
+  void _signInWithFacebook(){
+    authCubit.signInWithFacebook();
   }
 
   void _navigateToRegistrationScreen() {

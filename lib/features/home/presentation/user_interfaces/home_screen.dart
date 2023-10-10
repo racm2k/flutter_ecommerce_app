@@ -1,12 +1,16 @@
+import 'package:app/core/blocs/application_state.dart';
 import 'package:app/core/blocs/cubit_factory.dart';
-import 'package:app/core/constants/application_constants.dart';
-import 'package:app/core/components/carousel_slider.dart';
-import 'package:app/features/home/presentation/components/drawer_body.dart';
-import 'package:app/core/data/models/item_model.dart';
+import 'package:app/core/components/custom_scaffold.dart';
+import 'package:app/core/data/models/item/item_model.dart';
+import 'package:app/core/data/models/user_model.dart';
+import 'package:app/core/utils/scroll_listener.dart';
+import 'package:app/features/home/presentation/business_components/home_cubit.dart';
 import 'package:app/core/navigator/application_routes.dart';
-import 'package:app/features/auth/presentation/business_components/auth_cubit.dart';
+import 'package:app/features/home/presentation/components/drawer_body.dart';
+import 'package:app/features/home/presentation/components/item_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:badges/badges.dart' as badges;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,29 +19,37 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
-  AnimationController? _animationController;
+class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _key = GlobalKey();
-  final authCubit = CubitFactory.authCubit;
+  final homeCubit = CubitFactory.homeCubit;
+  final items = List<Item>.generate(
+    10,
+    (index) => Item(
+        name: 'Dignissim convallis aenaea',
+        image: 'assets/images/mock_image.jpg',
+        price: 19.99,
+        id: '1'),
+  );
+
+  late bool _showCartBadge;
+  UserModel? user;
+
+  int _totalCartItems = 0;
+
+  void getUserData() {
+    homeCubit.getHomeData();
+  }
 
   @override
   void initState() {
-    super.initState();
     WidgetsFlutterBinding.ensureInitialized();
-    _animationController = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 300));
-  }
-
-  _toggleAnimation() {
-    _animationController!.isDismissed
-        ? _animationController!.forward()
-        : _animationController!.reverse();
+    getUserData();
+    homeCubit.updateCartTotalItems();
+    super.initState();
   }
 
   @override
   void dispose() {
-    _animationController!.dispose();
     super.dispose();
   }
 
@@ -49,134 +61,115 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    final rightSlide = MediaQuery.of(context).size.width * 0.5;
+    _showCartBadge = _totalCartItems > 0;
 
-    return BlocConsumer<AuthCubit, AuthStatus>(
-      bloc: authCubit,
+    return BlocConsumer<HomeCubit, ApplicationState>(
+      bloc: homeCubit,
       listener: (context, state) {
-        if (state == AuthStatus.unauthenticated) {
-          _navigateToAuthScreen();
+        switch (state.runtimeType) {
+          case HomeSignOutSuccessState:
+            _navigateToAuthScreen();
+            break;
+          case HomeAddToCartSuccessState:
+            homeCubit.updateCartTotalItems();
+            break;
+          case HomeGetTotalCartItemsState:
+            setState(() {
+              _totalCartItems = (state as HomeGetTotalCartItemsState).num;
+            });
+            break;
         }
       },
       builder: (context, state) {
-        return SafeArea(
-          child: AnimatedBuilder(
-            animation: _animationController!,
-            builder: (context, child) {
-              double right = rightSlide * _animationController!.value;
-              double scale = 1 - (_animationController!.value * 0.3);
-              return Stack(
-                children: [
-                  //Drawer
-                  Scaffold(
-                    backgroundColor: Colors.white,
-                    body: DrawerBody(
-                      animationController: _animationController!,
-                    ),
+        if (state is HomeUserDataSuccessState) {
+          user = state.user;
+        }
+        if (state is HomeGetTotalCartItemsState) {
+          _totalCartItems = state.num;
+        }
+        return CustomScaffold(
+          scaffoldKey: _key,
+          padding: const EdgeInsets.all(0),
+          drawer: Drawer(
+              // Add a ListView to the drawer. This ensures the user can scroll
+              // through the options in the drawer if there isn't enough vertical
+              // space to fit everything.
+              child: DrawerBody(
+            user: user,
+            onSignOutConfirm: () => homeCubit.signOut(),
+          )),
+          leading: IconButton(
+              onPressed: () {
+                _key.currentState!.openDrawer();
+              },
+              icon: Icon(
+                Icons.menu,
+                color: Colors.amber[800],
+              )),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0, right: 16.0),
+              child: _shoppingCartBadge(),
+            ),
+          ],
+          body: Column(
+            children: [
+              Expanded(
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    childAspectRatio: 0.5,
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 0,
+                    mainAxisSpacing: 0,
                   ),
-                  //Main Screen
-                  GestureDetector(
-                    onTap: () {
-                      if (_animationController!.isCompleted) {
-                        _toggleAnimation();
-                      }
-                    },
-                    child: Transform(
-                      transform: Matrix4.identity()
-                        ..translate(right, 0.0, 0.0)
-                        ..scale(scale),
-                      alignment: Alignment.center,
-                      child: Material(
-                        clipBehavior: Clip.antiAlias,
-                        elevation: 10,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              _animationController!.isDismissed ? 0 : 20.0),
-                        ),
-                        child: Scaffold(
-                          key: _key,
-                          appBar: AppBar(
-                            backgroundColor: Colors.transparent,
-                            elevation: 0,
-                            leading: IconButton(
-                              onPressed: () => _toggleAnimation(),
-                              icon: const Icon(
-                                Icons.menu,
-                                color: Colors.black54,
-                              ),
-                            ),
-                            title: const Text(
-                              'Garbo',
-                              style: TextStyle(
-                                color: Colors.black54,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                            centerTitle: true,
-                            actions: [
-                              Visibility(
-                                visible: false,
-                                child: IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(
-                                    Icons.notifications,
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          body: SingleChildScrollView(
-                            child: Padding(
-                              padding: const EdgeInsets.all(defaultPadding),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  const Text(
-                                    'Alguns artigos',
-                                    style: TextStyle(
-                                      fontSize: 32,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: defaultPadding,
-                                  ),
-                                  const Text('Vários desportos',
-                                      style: TextStyle(fontSize: 22)),
-                                  const SizedBox(
-                                    height: defaultPadding,
-                                  ),
-                                  GarboSlider(items: firstSliderMocks),
-                                  const SizedBox(
-                                    height: defaultPadding,
-                                  ),
-                                  const Text(
-                                    'Sport Wear',
-                                    style: TextStyle(fontSize: 22),
-                                  ),
-                                  const SizedBox(
-                                    height: defaultPadding,
-                                  ),
-                                  GarboSlider(items: secondSliderMocks),
-                                  const Text(
-                                    'Bordados, transfers e serigrafia disponíveis em todos os artigos',
-                                    style: TextStyle(fontSize: 14),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
+                  itemBuilder: (context, index) {
+                    var item = items[index];
+                    return ItemCard(
+                      item: item,
+                      onAddToCartPressed: () {
+                        homeCubit.addToCart(item);
+                      },
+                      onAddToFavoritesPressed: () {},
+                    );
+                  },
+                  itemCount: items.length,
+                ),
+              ),
+            ],
           ),
         );
       },
+    );
+  }
+
+  Widget _shoppingCartBadge() {
+    return GestureDetector(
+      onTap: () async {
+        await Navigator.of(context).pushNamed(ApplicationRoutes.cartScreen);
+        if (mounted) {
+          homeCubit.updateCartTotalItems();
+        }
+      },
+      child: badges.Badge(
+        showBadge: _showCartBadge,
+        ignorePointer: false,
+        badgeContent: Text(
+          _totalCartItems.toString(),
+        ),
+        badgeStyle: badges.BadgeStyle(
+          shape: badges.BadgeShape.circle,
+          badgeColor: Colors.amber,
+          padding: const EdgeInsets.all(6),
+          borderRadius: BorderRadius.circular(4),
+          borderSide: const BorderSide(color: Colors.white, width: 2),
+          elevation: 0,
+        ),
+        child: Icon(
+          Icons.shopping_cart,
+          color: Colors.amber[800],
+          size: 26,
+        ),
+      ),
     );
   }
 }

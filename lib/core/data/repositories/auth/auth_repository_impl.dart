@@ -1,10 +1,55 @@
+
+import 'dart:developer';
+
 import 'package:app/core/data/repositories/auth/auth_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final FirebaseAuth firebaseAuth;
   const AuthRepositoryImpl({required this.firebaseAuth});
+
+  @override
+  Future<bool> signInWithFacebook() async {
+    try {
+      // Trigger Facebook login
+      final LoginResult loginResult = await FacebookAuth.instance.login();
+
+      // Check if the login was successful
+      if (loginResult.status == LoginStatus.success) {
+        // Use the access token to sign in or sign up with Firebase
+        final OAuthCredential facebookAuthCredential =
+            FacebookAuthProvider.credential(loginResult.accessToken!.token);
+
+
+
+        // Check if the user already exists in Firebase
+        UserCredential? existingUser = await firebaseAuth
+            .signInWithCredential(facebookAuthCredential);
+
+
+        final photoUrl= existingUser.additionalUserInfo?.profile?['picture']['data']['url'];
+
+
+        // Create a new document in the users collection with the uid
+        final userRef = FirebaseFirestore.instance
+            .collection('users')
+            .doc(existingUser.user?.uid);
+
+        // Save the user information to the database
+        await userRef.set({
+          'user_name': existingUser.user?.displayName,
+          'image_url': photoUrl,
+        });
+              return existingUser.user != null;
+      }
+      return false;
+    } catch (e) {
+      print("Error signing in with Facebook: $e");
+      return false;
+    }
+  }
 
   @override
   Future<bool> signInWithEmailAndPassword(String email, String password) async {

@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:app/core/blocs/application_state.dart';
 import 'package:app/core/blocs/cubit_factory.dart';
+import 'package:app/core/components/garbo_button.dart';
+import 'package:app/core/components/garbo_input_field.dart';
 import 'package:app/features/reset_password/presentation/business_components/cubit/reset_password_cubit.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -78,36 +80,18 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                     const Text('Insira uma nova senha para sua conta',
                         style: TextStyle(color: Colors.grey, fontSize: 18)),
                     const SizedBox(height: 20),
-                    TextFormField(
+                    GarboInputField(
                       key: const Key('passwordFieldResetPassword'),
-                      controller: newPasswordController,
-                      autofillHints: const [AutofillHints.password],
-                      textInputAction: TextInputAction.done,
-                      keyboardType: TextInputType.text,
-                      cursorColor: Colors.grey,
-                      cursorHeight: 24,
-                      autocorrect: false,
-                      decoration: const InputDecoration(
-                        labelText: "Nova Senha",
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
-                        ),
-                        labelStyle: TextStyle(color: Colors.grey),
-                      ),
-                      obscureText: true,
+                      inputController: newPasswordController,
+                      inputFieldType: InputFieldType.password,
+                      labelText: 'Nova Senha',
                     ),
                     const SizedBox(height: 16),
-                    ElevatedButton(
+                    GarboButton(
                         onPressed: () => _onUpdatePassword(),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.all(8.0),
-                          backgroundColor: Colors.cyan,
-                          textStyle: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        child: const Text('Atualizar Senha')),
+                        key: const Key('resetPasswordButton'),
+                        text: 'Atualizar Senha',
+                        isLoading: state is ApplicationLoadingState),
                   ],
                 ),
               ),

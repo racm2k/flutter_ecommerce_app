@@ -7,9 +7,10 @@ class AuthUseCaseImpl implements AuthUseCase {
   AuthUseCaseImpl({required this.authRepository});
 
   @override
-  Future<bool> signInWithEmailAndPassword(String email, String password) {
-    return authRepository.signInWithEmailAndPassword(email, password);
-  }
+  Future<bool> signInWithFacebook() async => await authRepository.signInWithFacebook();
+
+  @override
+  Future<bool> signInWithEmailAndPassword(String email, String password) async => await authRepository.signInWithEmailAndPassword(email, password);
 
   @override
   Future<void> signOut() {

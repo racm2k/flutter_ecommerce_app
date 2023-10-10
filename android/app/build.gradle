@@ -34,7 +34,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -93,4 +93,5 @@ dependencies {
     
     implementation 'io.branch.sdk.android:library:5.+'
     implementation("com.google.firebase:firebase-perf")
+    implementation 'com.stripe:stripe-android:20.32.0'
     }

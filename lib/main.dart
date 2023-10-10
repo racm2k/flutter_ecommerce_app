@@ -5,8 +5,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_branch_sdk/flutter_branch_sdk.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'core/firebase/firebase_options.dart';
+
+import '.env';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +18,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  Stripe.publishableKey=stripePublishableKey;
+  await Stripe.instance.applySettings();
   runApp(const MyApp());
 }
 
@@ -30,9 +35,7 @@ class MyApp extends StatelessWidget {
           fontFamily: GoogleFonts.getFont('Libre Baskerville').fontFamily,
           primarySwatch: Colors.blue,
           textTheme: const TextTheme(
-            bodyText2: TextStyle(
-              color: Colors.black54,
-            ),
+            bodyMedium: TextStyle(color: Colors.black, fontSize: 14),
           )),
       home: const SplashScreen(),
       navigatorKey: RouterNavigator.navigatorKey,

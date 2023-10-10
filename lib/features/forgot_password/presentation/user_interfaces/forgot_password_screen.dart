@@ -3,6 +3,8 @@ import 'dart:developer';
 
 import 'package:app/core/blocs/application_state.dart';
 import 'package:app/core/blocs/cubit_factory.dart';
+import 'package:app/core/components/garbo_button.dart';
+import 'package:app/core/components/garbo_input_field.dart';
 import 'package:app/core/constants/application_constants.dart';
 import 'package:app/core/navigator/application_routes.dart';
 import 'package:app/features/forgot_password/presentation/business_components/cubit/forgot_password_cubit.dart';
@@ -130,35 +132,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         'Insira o seu email para receber um link de atualização de senha',
                         style: TextStyle(color: Colors.grey, fontSize: 18)),
                     const SizedBox(height: 20),
-                    TextFormField(
+                    GarboInputField(
                       key: const Key('emailFieldForgotPassword'),
-                      controller: emailController,
-                      autofillHints: const [AutofillHints.email],
-                      textInputAction: TextInputAction.done,
-                      keyboardType: TextInputType.emailAddress,
-                      autocorrect: false,
-                      cursorHeight: 24,
-                      cursorColor: Colors.grey,
-                      decoration: const InputDecoration(
-                        labelText: "Email",
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
-                        ),
-                        labelStyle: TextStyle(color: Colors.grey),
-                      ),
+                      inputController: emailController,
+                      inputFieldType: InputFieldType.email,
+                      labelText: 'Email',
                     ),
                     const SizedBox(height: 16),
-                    ElevatedButton(
+                    GarboButton(
+                        key: const Key('forgotPasswordButton'),
                         onPressed: () => _onResetPassword(context),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.all(8.0),
-                          backgroundColor: Colors.cyan,
-                          textStyle: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        child: const Text('Receber Link')),
+                        text: 'Receber Link',
+                        isLoading: state is ApplicationLoadingState),
                   ],
                 ),
               ),

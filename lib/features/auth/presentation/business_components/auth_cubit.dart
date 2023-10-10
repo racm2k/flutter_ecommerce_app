@@ -36,6 +36,20 @@ class AuthCubit extends Cubit<AuthStatus> {
     }
   }
 
+  void signInWithFacebook() async{
+    try{
+      emit(AuthStatus.authenticating);
+      final isSignedIn= await authUseCase.signInWithFacebook();
+      if(isSignedIn){
+        emit(AuthStatus.authenticated);
+      }else{
+        emit(AuthStatus.authenticationFailed);
+      }
+    }catch(e){
+      print(e);
+    }
+  }
+
   void signInWithEmailAndPassword(String email, String password) async {
     // Implement Firebase Email/Password authentication here
     // Update the state based on the authentication result.

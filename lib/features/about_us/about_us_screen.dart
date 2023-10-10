@@ -1,3 +1,4 @@
+import 'package:app/core/components/custom_scaffold.dart';
 import 'package:app/core/constants/application_constants.dart';
 import 'package:flutter/material.dart';
 
@@ -7,21 +8,8 @@ class AboutUsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          centerTitle: true,
-          leading: const BackButton(color: Colors.black),
-          title: const Text(
-            'Sobre Nós',
-            style: TextStyle(
-              color: Colors.black54,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
+      child: CustomScaffold(
+        title: 'Sobre Nós',
         body: Padding(
           padding: const EdgeInsets.all(defaultPadding),
           child: Column(

@@ -6,4 +6,7 @@ class ApplicationRoutes {
   static const contactsScreen = 'contacts-screen';
   static const forgotPasswordScreen = 'forgot-password-screen';
   static const resetPasswordScreen = 'reset-password-screen';
+  static const cartScreen = 'cart-screen';
+  static const ordersScreen = 'orders-screen';
+  static const paymentScreen = 'payment-screen';
 }

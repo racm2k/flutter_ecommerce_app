@@ -45,7 +45,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               FirebaseAnalytics.instance.logSignUp(signUpMethod: 'email');
               _navigateToLoginScreen();
             }
-            if(state == AuthStatus.registrationFailed){
+            if (state == AuthStatus.registrationFailed) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Falha no registo'),
@@ -111,13 +111,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                             text: 'Registar',
                             isLoading: state == AuthStatus.registering,
                           ),
-                          TextButton(
-                            onPressed: () => _navigateToLoginScreen(),
-                            child: const Text(
-                              'Já possui uma conta? Clique aqui!',
-                              style: TextStyle(
-                                color: Colors.black54,
-                                fontWeight: FontWeight.bold,
+
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: TextButton(
+                                onPressed: () => _navigateToLoginScreen(),
+                                child: const Text(
+                                  'Já possui uma conta? Clique aqui!',
+                                  style: TextStyle(
+                                    color: Colors.black54,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
                             ),
                           ),

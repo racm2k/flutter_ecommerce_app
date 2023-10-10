@@ -21,18 +21,25 @@ class InputFields extends StatelessWidget {
     return AutofillGroup(
       child: Column(
         children: <Widget>[
-          if (authType == AuthType.registration)
+          if (authType == AuthType.registration) ...[
             GarboInputField(
               key: const Key('usernameField'),
               inputController: usernameController,
               labelText: "Nome de utilizador",
               inputFieldType: InputFieldType.username,
             ),
+            const SizedBox(
+              height: 16,
+            )
+          ],
           GarboInputField(
             key: const Key('emailField'),
             inputController: emailController,
             labelText: "Email",
             inputFieldType: InputFieldType.email,
+          ),
+          const SizedBox(
+            height: 16,
           ),
           GarboInputField(
             key: const Key('passwordField'),

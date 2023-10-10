@@ -1,4 +1,5 @@
 abstract class AuthUseCase {
+  Future<bool> signInWithFacebook();
   Future<bool> signInWithEmailAndPassword(String email, String password);
   Future<void> signOut();
   Future<bool> checkAuthentication();

@@ -19,7 +19,7 @@ class GarboInputField extends StatelessWidget {
       key: key,
       controller: inputController,
       autofillHints: inputFieldType == InputFieldType.username
-          ? const [AutofillHints.username]
+          ? const [AutofillHints.name]
           : inputFieldType == InputFieldType.email
               ? const [AutofillHints.email]
               : const [AutofillHints.password],
@@ -34,8 +34,7 @@ class GarboInputField extends StatelessWidget {
               : TextInputType.text,
       autocorrect: false,
       minLines: inputFieldType == InputFieldType.message ? 4 : 1,
-      maxLines: inputFieldType == InputFieldType.message ? 5:1,
-      cursorHeight: 24,
+      maxLines: inputFieldType == InputFieldType.message ? 5 : 1,
       cursorColor: Colors.grey,
       obscureText: inputFieldType == InputFieldType.password ? true : false,
       validator: (value) {
@@ -49,15 +48,20 @@ class GarboInputField extends StatelessWidget {
         }
         return null;
       },
+      textAlignVertical: TextAlignVertical.center,
       decoration: InputDecoration(
-        labelText: labelText,
-        border: inputFieldType == InputFieldType.message
-            ? const OutlineInputBorder()
-            : const UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey),
-              ),
-        labelStyle: const TextStyle(color: Colors.grey),
-      ),
+          isCollapsed: true,
+          labelText: labelText,
+          contentPadding: EdgeInsets.all(16),
+          border: OutlineInputBorder(
+              borderSide: BorderSide.none,
+              borderRadius: BorderRadius.circular(20)),
+          labelStyle: const TextStyle(
+            color: Colors.grey,
+          ),
+          filled: true,
+          fillColor: Colors.grey[200],
+          floatingLabelBehavior: FloatingLabelBehavior.never),
     );
   }
 }

@@ -8,7 +8,7 @@ The purpose is to try implement these new functionalities
 ## Technologies Used
 
 RIght now I am using:
-- Firebase Authentication for, well you guessed it, authentication.
+- Firebase Authentication.
 - Cloud Firestore to store some user data like username, profile picture, etc.
 - Cubit for state management.
 - Branch.io for deep links.

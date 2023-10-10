@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:app/core/components/custom_scaffold.dart';
 import 'package:app/core/components/garbo_input_field.dart';
 import 'package:app/core/constants/application_constants.dart';
 import 'package:app/core/components/garbo_button.dart';
@@ -20,11 +21,11 @@ class _ContactsScreenState extends State<ContactsScreen> {
   final TextEditingController _messageController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-
   void _sendEmail() async {
     final Uri emailUri = Uri(
       scheme: 'mailto',
-      path: 'reuban02@gmail.com', // Change this to the recipient's email address
+      path:
+          'reuban02@gmail.com', // Change this to the recipient's email address
       queryParameters: {
         'subject': _subjectController.text,
         'body': _messageController.text,
@@ -32,34 +33,21 @@ class _ContactsScreenState extends State<ContactsScreen> {
     );
 
     if (await canLaunchUrl(emailUri)) {
-      await launchUrl(emailUri).whenComplete(() => FirebaseAnalytics.instance.logEvent(name: 'send_contact_message'));
+      await launchUrl(emailUri).whenComplete(() =>
+          FirebaseAnalytics.instance.logEvent(name: 'send_contact_message'));
     } else {
       // Handle error
       log('Could not launch email.');
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          appBar: AppBar(
-            leading: const BackButton(color: Colors.grey),
-            title: const Text(
-              "Entre em Contato",
-              style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold),
-            ),
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            centerTitle: true,
-          ),
+        child: CustomScaffold(
+          title: "Entre em Contato",
           body: Padding(
             padding: const EdgeInsets.all(defaultPadding),
             child: SingleChildScrollView(
@@ -146,7 +134,9 @@ class _ContactsScreenState extends State<ContactsScreen> {
                                         MapsLauncher.launchCoordinates(
                                           storeLocationCoordinates.values.first,
                                           storeLocationCoordinates.values.last,
-                                        ).whenComplete(() => FirebaseAnalytics.instance.logEvent(name: 'store_location_opened')),
+                                        ).whenComplete(() =>
+                                            FirebaseAnalytics.instance.logEvent(
+                                                name: 'store_location_opened')),
                                     child: const Text(
                                       'Ver no mapa',
                                       style: TextStyle(
