@@ -1,5 +1,3 @@
-# Garbo App
-
 ## Description
 This is a personal project based on an ecommerce website [Garbo](https://www.garbo.pt). Currently in review on Play Store for open testing.
 The website doesn´t have much funtionality like authentication, purchases, payments, etc.
